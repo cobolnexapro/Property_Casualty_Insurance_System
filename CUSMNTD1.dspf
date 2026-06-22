@@ -1,0 +1,70 @@
+******************************************************************
+* DDS: CUSMNTD1 - Customer Add / Update Panel                    *
+* Module: CUS   Programs: CUS001A (Add), CUS002A (Update)        *
+******************************************************************
+     A                                      DSPSIZ(24 80 *DS3)
+     A                                      CF03(03 'Exit')
+     A                                      CF05(05 'Refresh')
+     A                                      CF12(12 'Cancel')
+     A                                      ENTER
+     A                                      PRINT
+     A                                      INDARA
+     A          R CUSMNTFM                  CA03 CA05 CA12
+     A                                      OVERLAY
+     A            1     2'PCIS'
+     A            1    25'Customer Maintenance'
+     A                                  DSPATR(HI UL)
+     A            1    65DATE
+     A                                  EDTCDE(Y)
+     A            2     2'Mode:'
+     A            2     8MODE       1A  O
+     A                                  DSPATR(HI)
+     A            3     2'------------------------------------'-
+     A                  '------------------------------------'
+     A            5     2'Customer ID  . . . . . . :'
+     A            5    30CUSTID    10A  B  1  5 30
+     A           20                       DSPATR(PR)
+     A            6     2'Customer Type (I/C). . . :'
+     A            6    30CUSTTYPE   1A  B  1  6 30
+     A            7     2'Customer Name. . . . . . :'
+     A            7    30CUSTNAME  60A  B  1  7 30
+     A            8     2'First Name . . . . . . . :'
+     A            8    30FSTNAME   30A  B  1  8 30
+     A            9     2'Last Name. . . . . . . . :'
+     A            9    30LSTNAME   30A  B  1  9 30
+     A           10     2'Date of Birth (MM/DD/YYYY):'
+     A           10    30DOB        8A  B  1 10 30
+     A           11     2'Tax ID / SSN . . . . . . :'
+     A           11    30TAXID     11A  B  1 11 30
+     A                                  DSPATR(PR)
+     A           12     2'Status (A/I) . . . . . . :'
+     A           12    30CUSTSTAT   1A  B  1 12 30
+     A           13     2'Email Address. . . . . . :'
+     A           13    30EMAIL     60A  B  1 13 30
+     A           14     2'Phone Number . . . . . . :'
+     A           14    30PHONE     15A  B  1 14 30
+     A           16     2'Address Line 1 . . . . . :'
+     A           16    30ADDRLN1   40A  B  1 16 30
+     A           17     2'Address Line 2 . . . . . :'
+     A           17    30ADDRLN2   40A  B  1 17 30
+     A           18     2'City/State/Zip . . . . . :'
+     A           18    30CITY      30A  B  1 18 30
+     A           18    61STATE      2A  B  1 18 61
+     A           18    64ZIP       10A  B  1 18 64
+     A           20     2'Message  . . :'
+     A           20    17MSGTEXT   60A  O  1 20 17
+     A                                  DSPATR(RI)
+     A           22     2'F3=Exit  F5=Refresh  F12=Cancel'
+     A                                  COLOR(BLU)
+     A     90                      ERRMSG('Customer ID is required'      -
+     A                                       70) 20 17
+     A     91                      ERRMSG('Customer ID already exists'   -
+     A                                       71) 20 17
+     A     92                      ERRMSG('Customer not found'           -
+     A                                       72) 20 17
+     A     93                      ERRMSG('Invalid Customer Type - must  -
+     A                                       be I or C' 73) 20 17
+     A     94                      ERRMSG('Required field missing'       -
+     A                                       74) 20 17
+     A     95                      ERRMSG('Record changed by another     -
+     A                                       user - re-display' 75) 20 17

@@ -1,0 +1,43 @@
+******************************************************************
+* DDS: MENUMD1 - PCIS Main Menu                                  *
+* Module: MENU                                                    *
+* Program: MENUMNTP                                               *
+******************************************************************
+     A                                      DSPSIZ(24 80 *DS3)
+     A                                      CF03(03 'Exit')
+     A                                      CF12(12 'Previous')
+     A                                      PRINT
+     A                                      INDARA
+     A          R MENUFMT                   CA03 CA12
+     A                                      OVERLAY
+     A            1     2'PCIS'
+     A                                  DSPATR(HI)
+     A            1    25'P C I S   M A I N   M E N U'
+     A                                  DSPATR(HI UL)
+     A            1    65'System:'
+     A            1    73SYSNAME    7A  O
+     A            2    65DATE
+     A                                  EDTCDE(Y)
+     A            2    73TIME
+     A            3     2'------------------------------------'-
+     A                  '------------------------------------'
+     A            5     5'1.  Customer Maintenance'
+     A            6     5'2.  Policy Maintenance'
+     A            7     5'3.  Claims Processing'
+     A            8     5'4.  Billing & Collections'
+     A            9     5'5.  Reports Menu'
+     A           10     5'6.  Agent Maintenance'
+     A           11     5'7.  Security/User Maintenance'
+     A           13     5'90. Sign Off'
+     A           18     5'Selection . . . . . . . . :'
+     A           18    33OPTION     2A  B  1 18 33
+     A                                  DSPATR(HI)
+     A           20     5'Message  . :'
+     A           20    18MSGTEXT   60A  O  1 20 18
+     A                                  DSPATR(RI)
+     A           22     5'F3=Exit   F12=Previous'
+     A                                  COLOR(BLU)
+     A     90                      ERRMSG('Invalid menu option selected.  -
+     A                                       PLEASE RE-ENTER' 70) 20 18
+     A     91                      ERRMSG('You are not authorized for     -
+     A                                       this option' 71) 20 18

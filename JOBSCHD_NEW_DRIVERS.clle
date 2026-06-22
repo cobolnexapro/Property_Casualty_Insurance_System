@@ -1,0 +1,127 @@
+/*----------------------------------------------------------------*/
+/* MEMBER   : JOBSCHD4                                              */
+/* PURPOSE  : NIGHTLY BATCH DRIVER - DAILY PREMIUM PROCESSING AND   */
+/*            CLAIM PAYMENT PROCESSING. SUBMITTED NIGHTLY BY THE    */
+/*            SYSTEM JOB SCHEDULER (WRKJOBSCDE) AHEAD OF JOBSCHD1/2.*/
+/* CALLS    : PRM005B (DAILY PREMIUM PROCESSING)                   */
+/*            CLM006B (CLAIM PAYMENT PROCESSING)                   */
+/*----------------------------------------------------------------*/
+             PGM
+             DCL        VAR(&MSG)     TYPE(*CHAR) LEN(132)
+
+             CALL       PGM(PRM005B)
+             MONMSG     MSGID(CPF0000) EXEC(DO)
+                 SNDPGMMSG  MSGID(CPF9898) MSGF(QCPFMSG) +
+                            MSGDTA('JOBSCHD4 - PRM005B FAILED -     +
+                                   CONTINUING WITH CLM006B') +
+                            TOPGMQ(*EXT)
+             ENDDO
+
+             CALL       PGM(CLM006B)
+             MONMSG     MSGID(CPF0000) EXEC(DO)
+                 SNDPGMMSG  MSGID(CPF9898) MSGF(QCPFMSG) +
+                            MSGDTA('JOBSCHD4 - CLM006B FAILED') +
+                            TOPGMQ(*EXT)
+             ENDDO
+
+             ENDPGM
+
+/*----------------------------------------------------------------*/
+/* MEMBER   : JOBSCHD5                                              */
+/* PURPOSE  : MONTHLY BATCH DRIVER - BILLING GENERATION FOLLOWED    */
+/*            BY COMMISSION CALCULATION (COMMISSION DEPENDS ON      */
+/*            BILLING/PAYMENT ACTIVITY HAVING ALREADY POSTED).      */
+/*            CHAINED AFTER JOBSCHD3 (STATEMENT/BILLING DRIVER) IN  */
+/*            THE MONTH-END JOB SCHEDULE ENTRY.                     */
+/* CALLS    : BIL003B (BILLING GENERATION)                         */
+/*            CMM001B (COMMISSION CALCULATION)                     */
+/*----------------------------------------------------------------*/
+             PGM
+
+             CALL       PGM(BIL003B)
+             MONMSG     MSGID(CPF0000) EXEC(DO)
+                 SNDPGMMSG  MSGID(CPF9898) MSGF(QCPFMSG) +
+                            MSGDTA('JOBSCHD5 - BIL003B FAILED -     +
+                                   COMMISSION CALC SKIPPED') +
+                            TOPGMQ(*EXT)
+                 GOTO       ENDPGM
+             ENDDO
+
+             CALL       PGM(CMM001B)
+             MONMSG     MSGID(CPF0000) EXEC(DO)
+                 SNDPGMMSG  MSGID(CPF9898) MSGF(QCPFMSG) +
+                            MSGDTA('JOBSCHD5 - CMM001B FAILED') +
+                            TOPGMQ(*EXT)
+             ENDDO
+
+ENDPGM:      ENDPGM
+
+/*----------------------------------------------------------------*/
+/* MEMBER   : JOBSCHD6                                              */
+/* PURPOSE  : MONTH-END BATCH DRIVER - AUDIT LOG ARCHIVING.         */
+/*            RUN ONCE PER MONTH (NOT PART OF THE NIGHTLY CYCLE) ON */
+/*            A DEDICATED JOB SCHEDULE ENTRY, OUTSIDE THE NIGHTLY   */
+/*            RENEWAL/BILLING WINDOW SO ARCHIVE DELETES DO NOT      */
+/*            CONTEND FOR AUDIT_LOG_T LOCKS WITH ONLINE USERS.      */
+/* CALLS    : AUD002B (AUDIT ARCHIVING)                            */
+/*----------------------------------------------------------------*/
+             PGM
+
+             CALL       PGM(AUD002B)
+             MONMSG     MSGID(CPF0000) EXEC(DO)
+                 SNDPGMMSG  MSGID(CPF9898) MSGF(QCPFMSG) +
+                            MSGDTA('JOBSCHD6 - AUD002B FAILED') +
+                            TOPGMQ(*EXT)
+             ENDDO
+
+             ENDPGM
+
+/*----------------------------------------------------------------*/
+/* MEMBER   : JOBSCHD7                                              */
+/* PURPOSE  : NIGHTLY RENEWAL BATCH DRIVER (BATCH ENTRY POINT FOR   */
+/*            INTERACTIVE/BATCH-CALLABLE POL004A RENEWAL LOGIC,     */
+/*            ROUTED THROUGH THE DEDICATED BATCH PROGRAM POL006B).  */
+/*            CONSISTENT WITH THE EXISTING JOBSCHD2 SLOT - SHOWN    */
+/*            HERE AS A SEPARATE MEMBER SINCE POL006B IS A NEW      */
+/*            STANDALONE BATCH PROGRAM RATHER THAN A REUSE OF       */
+/*            JOBSCHD2'S CALL TO POL004A.                           */
+/* CALLS    : POL006B (RENEWAL PROCESSING)                         */
+/*----------------------------------------------------------------*/
+             PGM
+
+             CALL       PGM(POL006B)
+             MONMSG     MSGID(CPF0000) EXEC(DO)
+                 SNDPGMMSG  MSGID(CPF9898) MSGF(QCPFMSG) +
+                            MSGDTA('JOBSCHD7 - POL006B FAILED') +
+                            TOPGMQ(*EXT)
+             ENDDO
+
+             ENDPGM
+
+/*----------------------------------------------------------------*/
+/* CRTBNDCL STATEMENTS - ADD TO PCIS_CRTOBJ.clle SECTION 7 (CL     */
+/* PROGRAMS) ALONGSIDE THE EXISTING JOBSCHD1/JOBSCHD2/JOBSCHD3.     */
+/*----------------------------------------------------------------*/
+/*
+CRTBNDCL PGM(INSDEV/JOBSCHD4) SRCFILE(INSDEV/QCLSRC) SRCMBR(JOBSCHD4) +
+         TEXT('Nightly Batch Driver - Premium/Claim Payment')
+CRTBNDCL PGM(INSDEV/JOBSCHD5) SRCFILE(INSDEV/QCLSRC) SRCMBR(JOBSCHD5) +
+         TEXT('Monthly Batch Driver - Billing/Commission')
+CRTBNDCL PGM(INSDEV/JOBSCHD6) SRCFILE(INSDEV/QCLSRC) SRCMBR(JOBSCHD6) +
+         TEXT('Month-End Batch Driver - Audit Archiving')
+CRTBNDCL PGM(INSDEV/JOBSCHD7) SRCFILE(INSDEV/QCLSRC) SRCMBR(JOBSCHD7) +
+         TEXT('Nightly Batch Driver - Renewal Processing')
+
+CRTBNDCBL PGM(INSDEV/PRM005B) SRCFILE(INSDEV/QCBLLESRC) +
+          SRCMBR(PRM005B) TEXT('Daily Premium Processing - Batch')
+CRTBNDCBL PGM(INSDEV/POL006B) SRCFILE(INSDEV/QCBLLESRC) +
+          SRCMBR(POL006B) TEXT('Renewal Processing - Batch')
+CRTBNDCBL PGM(INSDEV/CLM006B) SRCFILE(INSDEV/QCBLLESRC) +
+          SRCMBR(CLM006B) TEXT('Claim Payment Processing - Batch')
+CRTBNDCBL PGM(INSDEV/BIL003B) SRCFILE(INSDEV/QCBLLESRC) +
+          SRCMBR(BIL003B) TEXT('Billing Generation - Batch')
+CRTBNDCBL PGM(INSDEV/CMM001B) SRCFILE(INSDEV/QCBLLESRC) +
+          SRCMBR(CMM001B) TEXT('Commission Calculation - Batch')
+CRTBNDCBL PGM(INSDEV/AUD002B) SRCFILE(INSDEV/QCBLLESRC) +
+          SRCMBR(AUD002B) TEXT('Audit Archiving - Batch')
+*/

@@ -1,0 +1,49 @@
+******************************************************************
+* DDS: CUSLSTD1 - Customer List / Search Subfile Panel           *
+* Module: CUS   Program: CUS004A                                  *
+******************************************************************
+     A                                      DSPSIZ(24 80 *DS3)
+     A R CUSSFL                            SFL
+     A            CUSTIDS   10A  O  4  3
+     A            CUSTNMS   30A  O  4 15
+     A            CUSTTYS    1A  O  4 47
+     A            CUSTSTS    1A  O  4 50
+     A            EMAILS    30A  O  4 53
+     A            OPTSFL     2A  B  4  3
+     A                                  DSPATR(HI)
+     A N31  31N32                       SFLNXTCHG
+     A                                      SFLEND(*MORE)
+     A          R CUSSFLCTL                 SFLCTL(CUSSFL)
+     A                                      SFLSIZ(0100)
+     A                                      SFLPAG(0011)
+     A     31                            SFLDSP
+     A     31                            SFLDSPCTL
+     A     32                            SFLCLR
+     A     90                            SFLEND
+     A                                      OVERLAY
+     A            6     3'Opt  Customer ID  Customer Name'-
+     A                  '                Typ St Email'
+     A                                  DSPATR(UL)
+     A                                      CA03 CA12
+     A          R CUSLSTFM
+     A            1     2'PCIS'
+     A            1    25'Customer List / Search'
+     A                                  DSPATR(HI UL)
+     A            1    65DATE
+     A                                  EDTCDE(Y)
+     A            3     2'Search Name. . . . . . . :'
+     A            3    30SRCHNAME  30A  B  1  3 30
+     A            3    62'(*=Any)'
+     A            4     2'Search Status (A/I/*). . :'
+     A            4    30SRCHSTAT   1A  B  1  4 30
+     A           20     2'Message  . . :'
+     A           20    17MSGTEXT   60A  O  1 20 17
+     A                                  DSPATR(RI)
+     A           22     2'F3=Exit  Opt:5=Inquire 2=Update 4=Delete'
+     A                                  COLOR(BLU)
+     A           23     2'        F12=Cancel       (Page Down=More)'
+     A                                  COLOR(BLU)
+     A     90                      ERRMSG('No customers found matching   -
+     A                                       search criteria' 70) 20 17
+     A     91                      ERRMSG('Invalid option selected'      -
+     A                                       71) 20 17

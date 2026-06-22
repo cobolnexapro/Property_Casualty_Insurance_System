@@ -1,0 +1,51 @@
+******************************************************************
+* DDS: CUSINQD1 - Customer Inquiry (Display-Only) Panel          *
+* Module: CUS   Program: CUS003A                                  *
+******************************************************************
+     A                                      DSPSIZ(24 80 *DS3)
+     A                                      CF03(03 'Exit')
+     A                                      CF06(06 'View Contacts')
+     A                                      CF12(12 'Cancel')
+     A                                      PRINT
+     A                                      INDARA
+     A          R CUSINQFM                  CA03 CA06 CA12
+     A                                      OVERLAY
+     A            1     2'PCIS'
+     A            1    25'Customer Inquiry'
+     A                                  DSPATR(HI UL)
+     A            1    65DATE
+     A                                  EDTCDE(Y)
+     A            3     2'------------------------------------'-
+     A                  '------------------------------------'
+     A            5     2'Customer ID  . . . . . . :'
+     A            5    30CUSTID    10A  B  1  5 30
+     A            6     2'Customer Type. . . . . . :'
+     A            6    30CUSTTYPE   1A  O  1  6 30
+     A            7     2'Customer Name. . . . . . :'
+     A            7    30CUSTNAME  60A  O  1  7 30
+     A            8     2'Date of Birth. . . . . . :'
+     A            8    30DOB        8A  O  1  8 30
+     A            9     2'Tax ID / SSN . . . . . . :'
+     A            9    30TAXID     11A  O  1  9 30
+     A                                  DSPATR(PR)
+     A           10     2'Status . . . . . . . . . :'
+     A           10    30CUSTSTAT   1A  O  1 10 30
+     A           11     2'Email Address. . . . . . :'
+     A           11    30EMAIL     60A  O  1 11 30
+     A           12     2'Phone Number . . . . . . :'
+     A           12    30PHONE     15A  O  1 12 30
+     A           14     2'Address. . . . . . . . . :'
+     A           14    30ADDRLN1   40A  O  1 14 30
+     A           15    30ADDRLN2   40A  O  1 15 30
+     A           16    30CITY      30A  O  1 16 30
+     A           16    61STATE      2A  O  1 16 61
+     A           16    64ZIP       10A  O  1 16 64
+     A           18     2'Created By/Date. . . . . :'
+     A           18    30CRTUSER   10A  O  1 18 30
+     A           18    41CRTTS     26A  O  1 18 41
+     A           20     2'Message  . . :'
+     A           20    17MSGTEXT   60A  O  1 20 17
+     A                                  DSPATR(RI)
+     A           22     2'F3=Exit  F6=View Contacts  F12=Cancel'
+     A                                  COLOR(BLU)
+     A     90                      ERRMSG('Customer not found' 70) 20 17

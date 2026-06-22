@@ -1,0 +1,59 @@
+******************************************************************
+* DDS: CLMUPDD1 - Claim Update / Adjuster Maintenance Panel      *
+* Module: CLM   Program: CLM002A                                  *
+******************************************************************
+     A                                      DSPSIZ(24 80 *DS3)
+     A                                      CF03(03 'Exit')
+     A                                      CF09(09 'Add Note')
+     A                                      CF12(12 'Cancel')
+     A                                      ENTER
+     A                                      PRINT
+     A                                      INDARA
+     A          R CLMUPDFM                  CA03 CA09 CA12
+     A                                      OVERLAY
+     A            1     2'PCIS'
+     A            1    25'Claim Update / Adjuster Assignment'
+     A                                  DSPATR(HI UL)
+     A            1    65DATE
+     A                                  EDTCDE(Y)
+     A            3     2'------------------------------------'-
+     A                  '------------------------------------'
+     A            5     2'Claim Number . . . . . . :'
+     A            5    30CLMNBR    14A  B  1  5 30
+     A            6     2'Policy Number. . . . . . :'
+     A            6    30POLNBR    12A  O  1  6 30
+     A            7     2'Claim Status . . . . . . :'
+     A            7    30CLMSTAT    1A  O  1  7 30
+     A            8     2'Loss Date. . . . . . . . :'
+     A            8    30LOSSDATE  10A  O  1  8 30
+     A            9     2'Claim Type . . . . . . . :'
+     A            9    30CLMTYPE    3A  O  1  9 30
+     A           11     2'Adjuster ID. . . . . . . :'
+     A           11    30ADJID      8A  B  1 11 30
+     A           11    45ADJNAME   30A  O  1 11 45
+     A           12     2'Adjuster Type (I/E). . . :'
+     A           12    30ADJTYPE    1A  O  1 12 30
+     A           13     2'Authority Limit. . . . . :'
+     A           13    30AUTHLMT   11Y2O  1 13 30
+     A                                  EDTCDE(1)
+     A           15     2'Current Reserve Amount . :'
+     A           15    30CURRESAMT 11Y2B  1 15 30
+     A                                  EDTCDE(1)
+     A           16     2'Change Reason. . . . . . :'
+     A           16    30CHGRSN    50A  B  1 16 30
+     A           20     2'Message  . . :'
+     A           20    17MSGTEXT   60A  O  1 20 17
+     A                                  DSPATR(RI)
+     A           22     2'F3=Exit  F9=Add Note  F12=Cancel'
+     A                                  COLOR(BLU)
+     A     90                      ERRMSG('Claim not found' 70) 20 17
+     A     91                      ERRMSG('Adjuster ID not found'        -
+     A                                       71) 20 17
+     A     92                      ERRMSG('Reserve change exceeds        -
+     A                                       Adjuster Authority Limit'   -
+     A                                       72) 20 17
+     A     93                      ERRMSG('Change Reason is required     -
+     A                                       when Reserve is changed'    -
+     A                                       73) 20 17
+     A     94                      ERRMSG('Claim is closed - update      -
+     A                                       not permitted' 74) 20 17

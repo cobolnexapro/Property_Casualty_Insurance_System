@@ -1,0 +1,34 @@
+******************************************************************
+* DDS: RPTCONFD1 - Report Job Submission Confirmation Panel      *
+* Module: RPT   Program: RPT001A (and other report drivers)      *
+******************************************************************
+     A                                      DSPSIZ(24 80 *DS3)
+     A                                      CF03(03 'Exit')
+     A                                      CF12(12 'Return to Reports Menu')
+     A                                      PRINT
+     A                                      INDARA
+     A          R RPTCONFM                  CA03 CA12
+     A                                      OVERLAY
+     A            1     2'PCIS'
+     A            1    25'Report Submission Confirmation'
+     A                                  DSPATR(HI UL)
+     A            1    65DATE
+     A                                  EDTCDE(Y)
+     A            3     2'------------------------------------'-
+     A                  '------------------------------------'
+     A            6     2'Report Name. . . . . . . :'
+     A            6    30RPTNAME   40A  O  1  6 30
+     A            7     2'Job Name . . . . . . . . :'
+     A            7    30JOBNAME   10A  O  1  7 30
+     A            8     2'Job Number . . . . . . . :'
+     A            8    30JOBNBR     6A  O  1  8 30
+     A            9     2'Output Queue . . . . . . :'
+     A            9    30OUTQ      10A  O  1  9 30
+     A           11     2'Status . . . . . . . . . :'
+     A           11    30JOBSTAT  20A  O  1 11 30
+     A                                  DSPATR(HI)
+     A           20     2'Message  . . :'
+     A           20    17MSGTEXT   60A  O  1 20 17
+     A                                  DSPATR(RI)
+     A           22     2'F3=Exit  F12=Return to Reports Menu'
+     A                                  COLOR(BLU)

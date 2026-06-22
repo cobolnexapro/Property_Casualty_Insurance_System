@@ -1,0 +1,257 @@
+/*================================================================*/
+/* PCIS - Policy/Claims Insurance System                          */
+/* Object Creation Script - IBM i (CL Commands)                   */
+/* Run section-by-section via SBMJOB/RUNRMTCMD, or as RUNQRY/      */
+/* QCMD source members executed line-by-line.                     */
+/*================================================================*/
+
+/*----------------------------------------------------------------*/
+/* 1. LIBRARIES                                                    */
+/*----------------------------------------------------------------*/
+CRTLIB LIB(INSDEV)  TYPE(*PROD) TEXT('PCIS - Development Library')
+CRTLIB LIB(INSTEST) TYPE(*PROD) TEXT('PCIS - Test/QA Library')
+CRTLIB LIB(INSPRD)  TYPE(*PROD) TEXT('PCIS - Production Library')
+
+/* Library list / job description will point to INSDEV first for dev work */
+
+/*----------------------------------------------------------------*/
+/* 2. SOURCE PHYSICAL FILES (created in each library)              */
+/*----------------------------------------------------------------*/
+
+/* --- INSDEV --- */
+CRTSRCPF FILE(INSDEV/QCLSRC)   RCDLEN(112) TEXT('CL Program Source')
+CRTSRCPF FILE(INSDEV/QCBLSRC)  RCDLEN(112) TEXT('ILE COBOL Program Source')
+CRTSRCPF FILE(INSDEV/QDDSSRC)  RCDLEN(112) TEXT('DDS - Display/Printer/Phys/Logical Source')
+CRTSRCPF FILE(INSDEV/QSQLSRC)  RCDLEN(112) TEXT('SQL DDL Source - Tables/Views/Index/Sequence')
+
+/* --- INSTEST --- */
+CRTSRCPF FILE(INSTEST/QCLSRC)  RCDLEN(112) TEXT('CL Program Source - Test')
+CRTSRCPF FILE(INSTEST/QCBLSRC) RCDLEN(112) TEXT('ILE COBOL Program Source - Test')
+CRTSRCPF FILE(INSTEST/QDDSSRC) RCDLEN(112) TEXT('DDS Source - Test')
+CRTSRCPF FILE(INSTEST/QSQLSRC) RCDLEN(112) TEXT('SQL DDL Source - Test')
+
+/* --- INSPRD (source kept for emergency-fix capability only) --- */
+CRTSRCPF FILE(INSPRD/QCLSRC)   RCDLEN(112) TEXT('CL Program Source - Production')
+CRTSRCPF FILE(INSPRD/QCBLSRC)  RCDLEN(112) TEXT('ILE COBOL Program Source - Production')
+CRTSRCPF FILE(INSPRD/QDDSSRC)  RCDLEN(112) TEXT('DDS Source - Production')
+CRTSRCPF FILE(INSPRD/QSQLSRC)  RCDLEN(112) TEXT('SQL DDL Source - Production')
+
+/*----------------------------------------------------------------*/
+/* 3. DISPLAY FILES  (DDS members must exist in QDDSSRC first)     */
+/*    Naming: <MOD><FUNC4><n>   e.g. POLMNTD1                      */
+/*----------------------------------------------------------------*/
+
+/* POL module */
+CRTDSPF FILE(INSDEV/POLMNTD1) SRCFILE(INSDEV/QDDSSRC) SRCMBR(POLMNTD1) +
+        TEXT('Policy Maintenance/Inquiry Panel')
+CRTDSPF FILE(INSDEV/POLREND1) SRCFILE(INSDEV/QDDSSRC) SRCMBR(POLREND1) +
+        TEXT('Policy Renewal Confirmation Panel')
+CRTDSPF FILE(INSDEV/POLCAND1) SRCFILE(INSDEV/QDDSSRC) SRCMBR(POLCAND1) +
+        TEXT('Policy Cancellation Panel')
+CRTDSPF FILE(INSDEV/POLSCHD1) SRCFILE(INSDEV/QDDSSRC) SRCMBR(POLSCHD1) +
+        TEXT('Coverage/Endorsement Subfile Panel')
+
+/* CLM module */
+CRTDSPF FILE(INSDEV/CLMFNLD1) SRCFILE(INSDEV/QDDSSRC) SRCMBR(CLMFNLD1) +
+        TEXT('Claim FNOL Entry Panel')
+CRTDSPF FILE(INSDEV/CLMUPDD1) SRCFILE(INSDEV/QDDSSRC) SRCMBR(CLMUPDD1) +
+        TEXT('Claim Update/Adjuster Maintenance Panel')
+CRTDSPF FILE(INSDEV/CLMAPRD1) SRCFILE(INSDEV/QDDSSRC) SRCMBR(CLMAPRD1) +
+        TEXT('Claim Approval/Denial Panel')
+CRTDSPF FILE(INSDEV/CLMPAYD1) SRCFILE(INSDEV/QDDSSRC) SRCMBR(CLMPAYD1) +
+        TEXT('Claim Payment Issuance Panel')
+CRTDSPF FILE(INSDEV/CLMINQD1) SRCFILE(INSDEV/QDDSSRC) SRCMBR(CLMINQD1) +
+        TEXT('Claim Inquiry Panel w/ Subfile Tabs')
+
+/*----------------------------------------------------------------*/
+/* 4. PRINTER FILES                                                 */
+/*    Naming: <MOD><RPT><n>P                                       */
+/*----------------------------------------------------------------*/
+CRTPRTF FILE(INSDEV/POLPOLP1) SRCFILE(INSDEV/QDDSSRC) SRCMBR(POLPOLP1) +
+        TEXT('Policy Declaration/Confirmation Print')
+CRTPRTF FILE(INSDEV/CLMPAYP1) SRCFILE(INSDEV/QDDSSRC) SRCMBR(CLMPAYP1) +
+        TEXT('Claim Payment Voucher Print')
+CRTPRTF FILE(INSDEV/RPT001P1) SRCFILE(INSDEV/QDDSSRC) SRCMBR(RPT001P1) +
+        TEXT('Regulatory/Statutory Extract Print')
+CRTPRTF FILE(INSDEV/RPT006P1) SRCFILE(INSDEV/QDDSSRC) SRCMBR(RPT006P1) +
+        TEXT('Batch Exception Report Print')
+
+/*----------------------------------------------------------------*/
+/* 5. PHYSICAL FILES                                                */
+/*    Production standard = SQL CREATE TABLE (run via RUNSQLSTM    */
+/*    against QSQLSRC members). DDS PFs shown below are the legacy-*/
+/*    style equivalents for migration/compatibility scenarios only.*/
+/*----------------------------------------------------------------*/
+
+/* 5a. SQL Tables - run DDL members through RUNSQLSTM */
+RUNSQLSTM SRCFILE(INSDEV/QSQLSRC) SRCMBR(CUSTOMER_T)   COMMIT(*NONE)
+RUNSQLSTM SRCFILE(INSDEV/QSQLSRC) SRCMBR(AGENT_T)      COMMIT(*NONE)
+RUNSQLSTM SRCFILE(INSDEV/QSQLSRC) SRCMBR(QUOTE_T)      COMMIT(*NONE)
+RUNSQLSTM SRCFILE(INSDEV/QSQLSRC) SRCMBR(POLICY_T)     COMMIT(*NONE)
+RUNSQLSTM SRCFILE(INSDEV/QSQLSRC) SRCMBR(COVERAGE_T)   COMMIT(*NONE)
+RUNSQLSTM SRCFILE(INSDEV/QSQLSRC) SRCMBR(DEDUCTIBLE_T) COMMIT(*NONE)
+RUNSQLSTM SRCFILE(INSDEV/QSQLSRC) SRCMBR(ENDORSEMENT_T) COMMIT(*NONE)
+RUNSQLSTM SRCFILE(INSDEV/QSQLSRC) SRCMBR(POLICY_HISTORY_T) COMMIT(*NONE)
+RUNSQLSTM SRCFILE(INSDEV/QSQLSRC) SRCMBR(CLAIM_T)      COMMIT(*NONE)
+RUNSQLSTM SRCFILE(INSDEV/QSQLSRC) SRCMBR(CLAIM_RESERVE_T) COMMIT(*NONE)
+RUNSQLSTM SRCFILE(INSDEV/QSQLSRC) SRCMBR(CLAIM_PAYMENT_T) COMMIT(*NONE)
+RUNSQLSTM SRCFILE(INSDEV/QSQLSRC) SRCMBR(CLAIM_DOCUMENT_T) COMMIT(*NONE)
+RUNSQLSTM SRCFILE(INSDEV/QSQLSRC) SRCMBR(CLAIM_ADJUSTER_T) COMMIT(*NONE)
+RUNSQLSTM SRCFILE(INSDEV/QSQLSRC) SRCMBR(USER_T)       COMMIT(*NONE)
+RUNSQLSTM SRCFILE(INSDEV/QSQLSRC) SRCMBR(ROLE_T)       COMMIT(*NONE)
+RUNSQLSTM SRCFILE(INSDEV/QSQLSRC) SRCMBR(CODE_TABLE_T) COMMIT(*NONE)
+RUNSQLSTM SRCFILE(INSDEV/QSQLSRC) SRCMBR(AUDIT_LOG_T)  COMMIT(*NONE)
+
+/* 5b. DDS Physical Files - legacy/migration-compatibility equivalents */
+CRTPF FILE(INSDEV/CUSTPF)   SRCFILE(INSDEV/QDDSSRC) SRCMBR(CUSTPF) +
+      TEXT('Customer Master PF (CUSTOMER_T)')
+CRTPF FILE(INSDEV/CUSCONPF) SRCFILE(INSDEV/QDDSSRC) SRCMBR(CUSCONPF) +
+      TEXT('Customer Contact PF')
+CRTPF FILE(INSDEV/CUSADRPF) SRCFILE(INSDEV/QDDSSRC) SRCMBR(CUSADRPF) +
+      TEXT('Customer Address PF')
+CRTPF FILE(INSDEV/AGENTPF)  SRCFILE(INSDEV/QDDSSRC) SRCMBR(AGENTPF) +
+      TEXT('Agent Master PF')
+CRTPF FILE(INSDEV/USERPF)   SRCFILE(INSDEV/QDDSSRC) SRCMBR(USERPF) +
+      TEXT('Application User PF')
+CRTPF FILE(INSDEV/ROLEPF)   SRCFILE(INSDEV/QDDSSRC) SRCMBR(ROLEPF) +
+      TEXT('Security Role PF')
+CRTPF FILE(INSDEV/CODETABPF) SRCFILE(INSDEV/QDDSSRC) SRCMBR(CODETABPF) +
+      TEXT('Generic Code Table PF')
+
+/*----------------------------------------------------------------*/
+/* 6. LOGICAL FILES                                                 */
+/*    Naming: <MOD>L<n>  -- created as DDS LFs (or SQL INDEX via    */
+/*    QSQLSRC for the SQL-table standard; both shown)               */
+/*----------------------------------------------------------------*/
+
+/* 6a. SQL Indexes against SQL tables */
+RUNSQLSTM SRCFILE(INSDEV/QSQLSRC) SRCMBR(POLICYL1)  COMMIT(*NONE)  /* CREATE INDEX POLICYL1 ON POLICY_T */
+RUNSQLSTM SRCFILE(INSDEV/QSQLSRC) SRCMBR(POLICYL2)  COMMIT(*NONE)
+RUNSQLSTM SRCFILE(INSDEV/QSQLSRC) SRCMBR(COVERL1)   COMMIT(*NONE)
+RUNSQLSTM SRCFILE(INSDEV/QSQLSRC) SRCMBR(ENDTL1)    COMMIT(*NONE)
+RUNSQLSTM SRCFILE(INSDEV/QSQLSRC) SRCMBR(POLHISL1)  COMMIT(*NONE)
+RUNSQLSTM SRCFILE(INSDEV/QSQLSRC) SRCMBR(CLMRESL1)  COMMIT(*NONE)
+RUNSQLSTM SRCFILE(INSDEV/QSQLSRC) SRCMBR(USERL1)    COMMIT(*NONE)
+RUNSQLSTM SRCFILE(INSDEV/QSQLSRC) SRCMBR(ROLEMENUL1) COMMIT(*NONE)
+RUNSQLSTM SRCFILE(INSDEV/QSQLSRC) SRCMBR(USERROLL1) COMMIT(*NONE)
+RUNSQLSTM SRCFILE(INSDEV/QSQLSRC) SRCMBR(USERROLL2) COMMIT(*NONE)
+
+/* 6b. DDS Logical File equivalents (over the DDS PFs in section 5b) */
+CRTLF FILE(INSDEV/CUSTL1) SRCFILE(INSDEV/QDDSSRC) SRCMBR(CUSTL1) +
+      TEXT('Customer LF keyed by Customer Type')
+CRTLF FILE(INSDEV/AGENTL1) SRCFILE(INSDEV/QDDSSRC) SRCMBR(AGENTL1) +
+      TEXT('Agent LF keyed by Agency Code')
+
+/*----------------------------------------------------------------*/
+/* 7. CL PROGRAMS                                                   */
+/*    Naming: <MOD>MNTP1 (menu/dispatch drivers), JOBSCHD<n>        */
+/*    (batch drivers). Source members must exist in QCLSRC first.   */
+/*----------------------------------------------------------------*/
+CRTBNDCL PGM(INSDEV/POLMNTP1) SRCFILE(INSDEV/QCLSRC) SRCMBR(POLMNTP1) +
+         TEXT('POL Module Menu/Dispatch Driver')
+CRTBNDCL PGM(INSDEV/CLMMNTP1) SRCFILE(INSDEV/QCLSRC) SRCMBR(CLMMNTP1) +
+         TEXT('CLM Module Menu/Dispatch Driver')
+CRTBNDCL PGM(INSDEV/BILMNTP1) SRCFILE(INSDEV/QCLSRC) SRCMBR(BILMNTP1) +
+         TEXT('BIL Module Menu/Dispatch Driver')
+CRTBNDCL PGM(INSDEV/JOBSCHD1) SRCFILE(INSDEV/QCLSRC) SRCMBR(JOBSCHD1) +
+         TEXT('Nightly Batch Driver - Policy/Claims')
+CRTBNDCL PGM(INSDEV/JOBSCHD2) SRCFILE(INSDEV/QCLSRC) SRCMBR(JOBSCHD2) +
+         TEXT('Nightly Renewal Batch Driver')
+CRTBNDCL PGM(INSDEV/JOBSCHD3) SRCFILE(INSDEV/QCLSRC) SRCMBR(JOBSCHD3) +
+         TEXT('Monthly Billing/Statement Batch Driver')
+
+/*----------------------------------------------------------------*/
+/* 8. JOB DESCRIPTIONS                                               */
+/*----------------------------------------------------------------*/
+CRTJOBD JOBD(INSDEV/PCISJOBD)  JOBQ(QGPL/QBATCH)  OUTQ(*USRPRF)   +
+        LOGLEVEL(4) LOGSEV(0) LOGTEXT(*NOLIST) +
+        LIBL(INSDEV QGPL) USRLIBL(INSDEV) +
+        TEXT('PCIS Interactive/Batch Job Desc - Dev')
+CRTJOBD JOBD(INSTEST/PCISJOBD) JOBQ(QGPL/QBATCH)  OUTQ(*USRPRF)   +
+        LOGLEVEL(4) LOGSEV(0) LOGTEXT(*NOLIST) +
+        LIBL(INSTEST QGPL) USRLIBL(INSTEST) +
+        TEXT('PCIS Job Desc - Test')
+CRTJOBD JOBD(INSPRD/PCISJOBD)  JOBQ(QGPL/QBATCH)  OUTQ(*USRPRF)   +
+        LOGLEVEL(4) LOGSEV(0) LOGTEXT(*NOLIST) +
+        LIBL(INSPRD QGPL) USRLIBL(INSPRD) +
+        TEXT('PCIS Job Desc - Production')
+CRTJOBD JOBD(INSPRD/PCISBATJD) JOBQ(QGPL/QBATCH)  OUTQ(*USRPRF)   +
+        LOGLEVEL(4) LOGSEV(0) LOGTEXT(*NOLIST) +
+        LIBL(INSPRD QGPL) USRLIBL(INSPRD) +
+        TEXT('PCIS Nightly/Monthly Batch Job Desc')
+
+/*----------------------------------------------------------------*/
+/* 9. MESSAGE FILES                                                  */
+/*    Naming: <MOD>MSGF, IDs <MOD>0001-<MOD>0099                    */
+/*----------------------------------------------------------------*/
+CRTMSGF MSGF(INSDEV/POLMSGF) TEXT('Policy Module Messages')
+CRTMSGF MSGF(INSDEV/CLMMSGF) TEXT('Claims Module Messages')
+CRTMSGF MSGF(INSDEV/BILMSGF) TEXT('Billing Module Messages')
+CRTMSGF MSGF(INSDEV/SECMSGF) TEXT('Security Module Messages')
+CRTMSGF MSGF(INSDEV/PCISMSGF) TEXT('PCIS Common/Shared Messages')
+
+/* Sample message entries (repeat ADDMSGD per message ID) */
+ADDMSGD MSGID(POL0001) MSGF(INSDEV/POLMSGF) +
+        MSG('Policy number &1 not found.') +
+        SEV(30) FMT((*CHAR 10))
+ADDMSGD MSGID(POL0002) MSGF(INSDEV/POLMSGF) +
+        MSG('Policy &1 is already in a final status.') +
+        SEV(30) FMT((*CHAR 10))
+ADDMSGD MSGID(CLM0001) MSGF(INSDEV/CLMMSGF) +
+        MSG('Claim &1 not found for policy &2.') +
+        SEV(30) FMT((*CHAR 10) (*CHAR 10))
+ADDMSGD MSGID(CLM0002) MSGF(INSDEV/CLMMSGF) +
+        MSG('Reserve amount exceeds adjuster authority limit.') +
+        SEV(40)
+
+/*----------------------------------------------------------------*/
+/* 10. USER PROFILES                                                 */
+/*     Group profiles per role + individual sample profiles          */
+/*----------------------------------------------------------------*/
+
+/* Group profiles (one per ROLE_T entry) */
+CRTUSRPRF USRPRF(INSADMIN) PASSWORD(*NONE) USRCLS(*SECOFR) +
+          INLMNU(*SIGNOFF) INLPGM(*NONE) +
+          TEXT('PCIS Administrator Group Profile') +
+          SPCAUT(*ALLOBJ *SECADM *JOBCTL)
+
+CRTUSRPRF USRPRF(INSUW)    PASSWORD(*NONE) USRCLS(*USER) +
+          INLMNU(PCISMENU) INLPGM(*NONE) +
+          CURLIB(INSPRD) LIBL(INSPRD) +
+          TEXT('PCIS Underwriter Group Profile')
+
+CRTUSRPRF USRPRF(INSADJ)   PASSWORD(*NONE) USRCLS(*USER) +
+          INLMNU(PCISMENU) INLPGM(*NONE) +
+          CURLIB(INSPRD) LIBL(INSPRD) +
+          TEXT('PCIS Claims Adjuster Group Profile')
+
+CRTUSRPRF USRPRF(INSAGT)   PASSWORD(*NONE) USRCLS(*USER) +
+          INLMNU(PCISMENU) INLPGM(*NONE) +
+          CURLIB(INSPRD) LIBL(INSPRD) +
+          TEXT('PCIS Agent Group Profile')
+
+CRTUSRPRF USRPRF(INSAUD)   PASSWORD(*NONE) USRCLS(*USER) +
+          INLMNU(PCISMENU) INLPGM(*NONE) +
+          CURLIB(INSPRD) LIBL(INSPRD) +
+          TEXT('PCIS Audit/Compliance Group Profile')
+
+/* Individual sample profiles attached to a group profile */
+CRTUSRPRF USRPRF(JSMITH) PASSWORD(*NONE) USRCLS(*USER) +
+          GRPPRF(INSUW) OWNER(*GRPPRF) GRPAUT(*CHANGE) +
+          INLMNU(PCISMENU) INLPGM(*NONE) +
+          CURLIB(INSPRD) JOBD(INSPRD/PCISJOBD) +
+          TEXT('J. Smith - Underwriter')
+
+CRTUSRPRF USRPRF(RJONES) PASSWORD(*NONE) USRCLS(*USER) +
+          GRPPRF(INSADJ) OWNER(*GRPPRF) GRPAUT(*CHANGE) +
+          INLMNU(PCISMENU) INLPGM(*NONE) +
+          CURLIB(INSPRD) JOBD(INSPRD/PCISJOBD) +
+          TEXT('R. Jones - Claims Adjuster')
+
+/* Authorize group profiles to libraries */
+GRTOBJAUT OBJ(INSPRD) OBJTYPE(*LIB) USER(INSUW INSADJ INSAGT INSAUD) AUT(*USE)
+GRTOBJAUT OBJ(INSDEV)  OBJTYPE(*LIB) USER(INSADMIN) AUT(*ALL)
+
+/*================================================================*/
+/* END OF SCRIPT                                                   */
+/*================================================================*/

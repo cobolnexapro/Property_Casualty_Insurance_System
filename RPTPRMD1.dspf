@@ -1,0 +1,50 @@
+******************************************************************
+* DDS: RPTPRMD1 - Report Parameter Prompt Panel                  *
+* Module: RPT   Program: RPT001A (and other report drivers)      *
+******************************************************************
+     A                                      DSPSIZ(24 80 *DS3)
+     A                                      CF03(03 'Exit')
+     A                                      CF05(05 'Submit')
+     A                                      CF12(12 'Cancel')
+     A                                      ENTER
+     A                                      PRINT
+     A                                      INDARA
+     A          R RPTPRMFM                  CA03 CA05 CA12
+     A                                      OVERLAY
+     A            1     2'PCIS'
+     A            1    25'Report Parameters'
+     A                                  DSPATR(HI UL)
+     A            1    65DATE
+     A                                  EDTCDE(Y)
+     A            2     2'Report Name. . . . . . . :'
+     A            2    30RPTNAME   40A  O  1  2 30
+     A                                  DSPATR(HI)
+     A            3     2'------------------------------------'-
+     A                  '------------------------------------'
+     A            5     2'Date From (MM/DD/YYYY) . :'
+     A            5    30DTFROM    10A  B  1  5 30
+     A            6     2'Date To   (MM/DD/YYYY) . :'
+     A            6    30DTTO      10A  B  1  6 30
+     A            7     2'Policy Type Filter (*=All):'
+     A            7    30POLTYPF    3A  B  1  7 30
+     A            8     2'Status Filter (*=All) . . :'
+     A            8    30STATFLT    1A  B  1  8 30
+     A            9     2'Agent ID Filter (*=All). :'
+     A            9    30AGTFLT     8A  B  1  9 30
+     A           11     2'Output Type (P=Print/. . :'
+     A           11    30OUTTYPE    1A  B  1 11 30
+     A                                  DSPATR(HI)
+     A           11    45'D=Display/S=Spool)'
+     A           13     2'Sort By. . . . . . . . . :'
+     A           13    30SORTBY    20A  B  1 13 30
+     A           20     2'Message  . . :'
+     A           20    17MSGTEXT   60A  O  1 20 17
+     A                                  DSPATR(RI)
+     A           22     2'F3=Exit  F5=Submit  F12=Cancel'
+     A                                  COLOR(BLU)
+     A     90                      ERRMSG('Date To must not precede      -
+     A                                       Date From' 70) 20 17
+     A     91                      ERRMSG('Invalid Output Type - use     -
+     A                                       P/D/S' 71) 20 17
+     A     92                      ERRMSG('Invalid filter value entered' -
+     A                                       72) 20 17

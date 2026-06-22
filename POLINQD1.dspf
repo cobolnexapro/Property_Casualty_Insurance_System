@@ -1,0 +1,44 @@
+******************************************************************
+* DDS: POLINQD1 - Policy Inquiry (Display-Only) Panel            *
+* Module: POL   Program: POL003A                                  *
+******************************************************************
+     A                                      DSPSIZ(24 80 *DS3)
+     A                                      CF03(03 'Exit')
+     A                                      CF06(06 'Coverages')
+     A                                      CF12(12 'Cancel')
+     A                                      PRINT
+     A                                      INDARA
+     A          R POLINQFM                  CA03 CA06 CA12
+     A                                      OVERLAY
+     A            1     2'PCIS'
+     A            1    25'Policy Inquiry'
+     A                                  DSPATR(HI UL)
+     A            1    65DATE
+     A                                  EDTCDE(Y)
+     A            3     2'------------------------------------'-
+     A                  '------------------------------------'
+     A            5     2'Policy Number. . . . . . :'
+     A            5    30POLNBR    12A  B  1  5 30
+     A            6     2'Policy Type. . . . . . . :'
+     A            6    30POLTYPE    3A  O  1  6 30
+     A            7     2'Customer . . . . . . . . :'
+     A            7    30CUSTNAME  50A  O  1  7 30
+     A            8     2'Agent. . . . . . . . . . :'
+     A            8    30AGTNAME   50A  O  1  8 30
+     A            9     2'Effective / Expiration Dt:'
+     A            9    30EFFDATE    8A  O  1  9 30
+     A            9    39'/'
+     A            9    41EXPDATE    8A  O  1  9 41
+     A           10     2'Policy Status. . . . . . :'
+     A           10    30POLSTAT    1A  O  1 10 30
+     A           11     2'Annual Premium . . . . . :'
+     A           11    30PREMANN   11Y2O  1 11 30
+     A                                  EDTCDE(1)
+     A           12     2'Underwriting Decision. . :'
+     A           12    30UWDEC      1A  O  1 12 30
+     A           20     2'Message  . . :'
+     A           20    17MSGTEXT   60A  O  1 20 17
+     A                                  DSPATR(RI)
+     A           22     2'F3=Exit  F6=Coverages  F12=Cancel'
+     A                                  COLOR(BLU)
+     A     90                      ERRMSG('Policy not found' 70) 20 17

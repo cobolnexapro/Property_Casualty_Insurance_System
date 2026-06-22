@@ -1,0 +1,59 @@
+******************************************************************
+* DDS: CLMAPRD1 - Claim Approval / Denial Panel                  *
+* Module: CLM   Program: CLM003A                                  *
+******************************************************************
+     A                                      DSPSIZ(24 80 *DS3)
+     A                                      CF03(03 'Exit')
+     A                                      CF12(12 'Cancel')
+     A                                      CA21(21)
+     A                                      CA22(22)
+     A                                      PRINT
+     A                                      INDARA
+     A          R CLMAPRFM                  CA03 CA12 CA21 CA22
+     A                                      OVERLAY
+     A            1     2'PCIS'
+     A            1    25'Claim Approval / Denial'
+     A                                  DSPATR(HI UL)
+     A            1    65DATE
+     A                                  EDTCDE(Y)
+     A            3     2'------------------------------------'-
+     A                  '------------------------------------'
+     A            5     2'Claim Number . . . . . . :'
+     A            5    30CLMNBR    14A  B  1  5 30
+     A            6     2'Policy Number. . . . . . :'
+     A            6    30POLNBR    12A  O  1  6 30
+     A            7     2'Insured. . . . . . . . . :'
+     A            7    30CUSTNAME  50A  O  1  7 30
+     A            8     2'Claim Type / Loss Date . :'
+     A            8    30CLMTYPE    3A  O  1  8 30
+     A            8    35LOSSDATE  10A  O  1  8 35
+     A            9     2'Current Reserve Amount . :'
+     A            9    30CURRESAMT 11Y2O  1  9 30
+     A                                  EDTCDE(1)
+     A           10     2'Adjuster Recommendation .:'
+     A           10    30RECDESC  50A  O  1 10 30
+     A           13     2'Decision (A=Approve/. . :'
+     A           13    30DECISION   1A  B  1 13 30
+     A                                  DSPATR(HI)
+     A           13    45'D=Deny)'
+     A           14     2'Approved/Denied Amount . :'
+     A           14    30DECAMT    11Y2B  1 14 30
+     A                                  EDTCDE(1)
+     A           15     2'Decision Comments. . . . :'
+     A           15    30DECCMT   50A  B  1 15 30
+     A           20     2'Message  . . :'
+     A           20    17MSGTEXT   60A  O  1 20 17
+     A                                  DSPATR(RI)
+     A           22     2'F3=Exit  F12=Cancel'
+     A                                  COLOR(BLU)
+     A           23     2'F21=Confirm Approve  F22=Confirm Deny'
+     A                                  COLOR(BLU)
+     A     90                      ERRMSG('Claim not found or not in     -
+     A                                       Pending Approval status'    -
+     A                                       70) 20 17
+     A     91                      ERRMSG('Decision must be A or D'      -
+     A                                       71) 20 17
+     A     92                      ERRMSG('Decision Comments are         -
+     A                                       required' 72) 20 17
+     A     93                      ERRMSG('Approved Amount cannot exceed -
+     A                                       Reserve Amount' 73) 20 17

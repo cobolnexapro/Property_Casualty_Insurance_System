@@ -1,0 +1,56 @@
+******************************************************************
+* DDS: BILINVD1 - Billing Invoice Generation Panel               *
+* Module: BIL   Program: BIL001A                                  *
+******************************************************************
+     A                                      DSPSIZ(24 80 *DS3)
+     A                                      CF03(03 'Exit')
+     A                                      CF12(12 'Cancel')
+     A                                      ENTER
+     A                                      PRINT
+     A                                      INDARA
+     A          R BILINVFM                  CA03 CA12
+     A                                      OVERLAY
+     A            1     2'PCIS'
+     A            1    25'Billing - Invoice Generation'
+     A                                  DSPATR(HI UL)
+     A            1    65DATE
+     A                                  EDTCDE(Y)
+     A            3     2'------------------------------------'-
+     A                  '------------------------------------'
+     A            5     2'Policy Number. . . . . . :'
+     A            5    30POLNBR    12A  B  1  5 30
+     A            6     2'Insured. . . . . . . . . :'
+     A            6    30CUSTNAME  50A  O  1  6 30
+     A            7     2'Annual Premium . . . . . :'
+     A            7    30PREMANN   11Y2O  1  7 30
+     A                                  EDTCDE(1)
+     A            8     2'Billing Plan (A/S/Q/M) . :'
+     A            8    30BILLPLAN   1A  B  1  8 30
+     A            9     2'Invoice Number (assigned) :'
+     A            9    30INVNBR    14A  O  1  9 30
+     A                                  DSPATR(HI)
+     A           10     2'Invoice Date . . . . . . :'
+     A           10    30INVDATE   10A  B  1 10 30
+     A           11     2'Due Date . . . . . . . . :'
+     A           11    30DUEDATE   10A  B  1 11 30
+     A           12     2'Invoice Amount . . . . . :'
+     A           12    30INVAMT    11Y2B  1 12 30
+     A                                  EDTCDE(1)
+     A           13     2'Installment Fee. . . . . :'
+     A           13    30INSTLFEE   9Y2B  1 13 30
+     A                                  EDTCDE(1)
+     A           14     2'Total Amount Due . . . . :'
+     A           14    30TOTALDUE  11Y2O  1 14 30
+     A                                  EDTCDE(1)
+     A                                  DSPATR(HI)
+     A           20     2'Message  . . :'
+     A           20    17MSGTEXT   60A  O  1 20 17
+     A                                  DSPATR(RI)
+     A           22     2'F3=Exit  F12=Cancel'
+     A                                  COLOR(BLU)
+     A     90                      ERRMSG('Policy not found or not       -
+     A                                       active' 70) 20 17
+     A     91                      ERRMSG('Invalid Billing Plan code'    -
+     A                                       71) 20 17
+     A     92                      ERRMSG('Due Date must be after        -
+     A                                       Invoice Date' 72) 20 17

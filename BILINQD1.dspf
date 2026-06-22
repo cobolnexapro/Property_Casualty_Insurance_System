@@ -1,0 +1,48 @@
+******************************************************************
+* DDS: BILINQD1 - Billing Inquiry / Account History Panel        *
+* Module: BIL   Program: BIL003A                                  *
+******************************************************************
+     A                                      DSPSIZ(24 80 *DS3)
+     A R BILSFL                            SFL
+     A            INVNBRS   14A  O  4  3
+     A            INVDATES  10A  O  4 18
+     A            DUEDATES  10A  O  4 29
+     A            INVAMTS   11Y2O  4 40
+     A                                  EDTCDE(1)
+     A            BALS      11Y2O  4 53
+     A                                  EDTCDE(1)
+     A            INVSTATS   1A  O  4 66
+     A N31  31N32                       SFLNXTCHG
+     A                                      SFLEND(*MORE)
+     A          R BILSFLCTL                 SFLCTL(BILSFL)
+     A                                      SFLSIZ(0100)
+     A                                      SFLPAG(0009)
+     A     31                            SFLDSP
+     A     31                            SFLDSPCTL
+     A     32                            SFLCLR
+     A     90                            SFLEND
+     A                                      OVERLAY
+     A                                      CA03 CA12
+     A            6     3'Invoice Number  Inv Date  '-
+     A                  'Due Date   Inv Amount  Balance     St'
+     A                                  DSPATR(UL)
+     A          R BILINQFM
+     A            1     2'PCIS'
+     A            1    25'Billing Inquiry / Account History'
+     A                                  DSPATR(HI UL)
+     A            1    65DATE
+     A                                  EDTCDE(Y)
+     A            2     2'Policy Number. . . . . . :'
+     A            2    30POLNBR    12A  B  1  2 30
+     A            2    45CUSTNAME  30A  O  1  2 45
+     A            3     2'Total Balance Outstanding :'
+     A            3    30TOTBAL    11Y2O  1  3 30
+     A                                  EDTCDE(1)
+     A                                  DSPATR(HI)
+     A           20     2'Message  . . :'
+     A           20    17MSGTEXT   60A  O  1 20 17
+     A                                  DSPATR(RI)
+     A           22     2'F3=Exit  F12=Cancel  (Page Down=More)'
+     A                                  COLOR(BLU)
+     A     90                      ERRMSG('No invoices found for this    -
+     A                                       policy' 70) 20 17

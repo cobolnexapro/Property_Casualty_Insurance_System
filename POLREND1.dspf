@@ -1,0 +1,50 @@
+******************************************************************
+* DDS: POLREND1 - Policy Renewal Confirmation Panel              *
+* Module: POL   Program: POL004A                                  *
+******************************************************************
+     A                                      DSPSIZ(24 80 *DS3)
+     A                                      CF03(03 'Exit')
+     A                                      CF12(12 'Cancel')
+     A                                      CA21(21)
+     A                                      PRINT
+     A                                      INDARA
+     A          R POLRENFM                  CA03 CA12 CA21
+     A                                      OVERLAY
+     A            1     2'PCIS'
+     A            1    25'Policy Renewal'
+     A                                  DSPATR(HI UL)
+     A            1    65DATE
+     A                                  EDTCDE(Y)
+     A            3     2'------------------------------------'-
+     A                  '------------------------------------'
+     A            5     2'Policy Number. . . . . . :'
+     A            5    30POLNBR    12A  B  1  5 30
+     A            6     2'Customer . . . . . . . . :'
+     A            6    30CUSTNAME  50A  O  1  6 30
+     A            7     2'Current Expiration Date . :'
+     A            7    30CUREXPDT   8A  O  1  7 30
+     A            8     2'New Effective Date . . . :'
+     A            8    30NEWEFFDT   8A  O  1  8 30
+     A            9     2'New Expiration Date. . . :'
+     A            9    30NEWEXPDT   8A  O  1  9 30
+     A           10     2'Current Annual Premium . :'
+     A           10    30CURPREM   11Y2O  1 10 30
+     A                                  EDTCDE(1)
+     A           11     2'New Annual Premium . . . :'
+     A           11    30NEWPREM   11Y2B  1 11 30
+     A                                  EDTCDE(1)
+     A           13     2'Confirm Renewal (Y/N). . :'
+     A           13    30CONFIRM    1A  B  1 13 30
+     A                                  DSPATR(HI)
+     A           20     2'Message  . . :'
+     A           20    17MSGTEXT   60A  O  1 20 17
+     A                                  DSPATR(RI)
+     A           22     2'F3=Exit  F12=Cancel  F21=Confirm Renewal'
+     A                                  COLOR(BLU)
+     A     90                      ERRMSG('Policy is not eligible for    -
+     A                                       renewal in current status'  -
+     A                                       70) 20 17
+     A     91                      ERRMSG('New Premium must be greater   -
+     A                                       than zero' 71) 20 17
+     A     92                      ERRMSG('Please respond Y or N'        -
+     A                                       72) 20 17

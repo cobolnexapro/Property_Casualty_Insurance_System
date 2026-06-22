@@ -1,0 +1,46 @@
+******************************************************************
+* DDS: SGNON001 - PCIS Sign-On / Login Screen                    *
+* Module: SEC (Security)                                         *
+* Program: SECSGNA                                                *
+******************************************************************
+     A                                      DSPSIZ(24 80 *DS3)
+     A                                      CF03(03 'Exit')
+     A                                      CF12(12 'Cancel')
+     A                                      PRINT
+     A                                      INDARA
+     A          R SGNONFMT                  CA03 CA12
+     A                                      OVERLAY
+     A  31                                  DSPATR(HI)
+     A            1     2'PCIS'
+     A                                  DSPATR(HI)
+     A                                  COLOR(BLU)
+     A            1    35'Policy & Claims Insurance System'
+     A                                  DSPATR(HI)
+     A            1    70DATE
+     A                                  EDTCDE(Y)
+     A            2    70TIME
+     A            3     2'------------------------------------'-
+     A                  '------------------------------------'
+     A            5    30'S I G N   O N'
+     A                                  DSPATR(HI UL)
+     A            8    10'User ID  . . . . . . . . :'
+     A            8    38USERID    10A  B  1  8 38
+     A                                  DSPATR(HI)
+     A           10    10'Password . . . . . . . . :'
+     A           10    38PASSWORD  10A  H  1 10 38
+     A                                  DSPATR(PR)
+     A           14    10'Program/Procedure  . . . :'
+     A           14    38PGMPROC   10A  O  1 14 38
+     A           15    10'Menu . . . . . . . . . . :'
+     A           15    38MENU      10A  O  1 15 38
+     A           20    10'Message . . :'
+     A           20    25MSGTEXT   60A  O  1 20 25
+     A                                  DSPATR(RI)
+     A           22    10'F3=Exit   F12=Cancel'
+     A                                  COLOR(BLU)
+     A     90                      ERRMSG('Invalid User ID or Password.   -
+     A                                       PLEASE RE-ENTER' 70) 20 25
+     A     91                      ERRMSG('User ID is disabled. Contact   -
+     A                                       Security Administrator' 71) 20 25
+     A     92                      ERRMSG('Password has expired. Contact  -
+     A                                       Security Administrator' 72) 20 25

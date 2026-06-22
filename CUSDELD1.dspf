@@ -1,0 +1,47 @@
+******************************************************************
+* DDS: CUSDELD1 - Customer Delete Confirmation Panel             *
+* Module: CUS   Program: CUS005A                                  *
+******************************************************************
+     A                                      DSPSIZ(24 80 *DS3)
+     A                                      CF03(03 'Exit')
+     A                                      CF12(12 'Cancel')
+     A                                      CA21(21)
+     A                                      PRINT
+     A                                      INDARA
+     A          R CUSDELFM                  CA03 CA12 CA21
+     A                                      OVERLAY
+     A            1     2'PCIS'
+     A            1    25'Customer Delete Confirmation'
+     A                                  DSPATR(HI UL)
+     A            1    65DATE
+     A                                  EDTCDE(Y)
+     A            3     2'------------------------------------'-
+     A                  '------------------------------------'
+     A            5     2'Customer ID  . . . . . . :'
+     A            5    30CUSTID    10A  O  1  5 30
+     A            6     2'Customer Name. . . . . . :'
+     A            6    30CUSTNAME  60A  O  1  6 30
+     A            7     2'Status . . . . . . . . . :'
+     A            7    30CUSTSTAT   1A  O  1  7 30
+     A            9     2'Dependent Quotes . . . . :'
+     A            9    30QCNT       7Y0O  1  9 30
+     A           10     2'Dependent Policies . . . :'
+     A           10    30PCNT       7Y0O  1 10 30
+     A           11     2'Dependent Claims . . . . :'
+     A           11    30CCNT       7Y0O  1 11 30
+     A           13     2'Delete Type Allowed. . . :'
+     A           13    30DELTYPE  20A  O  1 13 30
+     A                                  DSPATR(HI)
+     A           16     2'Confirm Delete (Y/N) . . :'
+     A           16    30CONFIRM    1A  B  1 16 30
+     A                                  DSPATR(HI)
+     A           20     2'Message  . . :'
+     A           20    17MSGTEXT   60A  O  1 20 17
+     A                                  DSPATR(RI)
+     A           22     2'F3=Exit  F12=Cancel  F21=Confirm Delete'
+     A                                  COLOR(BLU)
+     A     90                      ERRMSG('Customer has dependent        -
+     A                                       records - logical delete    -
+     A                                       only' 70) 20 17
+     A     91                      ERRMSG('Please respond Y or N'        -
+     A                                       71) 20 17

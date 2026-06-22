@@ -1,0 +1,49 @@
+******************************************************************
+* DDS: POLSCHD1 - Policy Coverage / Endorsement Subfile Panel    *
+* Module: POL   Programs: POL002A, POL003A                       *
+******************************************************************
+     A                                      DSPSIZ(24 80 *DS3)
+     A R COVSFL                            SFL
+     A            COVIDS    14A  H  4  3
+     A            COVTYPS    5A  O  4  3
+     A            COVDESCS  30A  O  4 10
+     A            LIMITAMS  11Y2O  4 42
+     A                                  EDTCDE(1)
+     A            PREMAMS   11Y2O  4 55
+     A                                  EDTCDE(1)
+     A            LINEACTS   1A  B  4 70
+     A N31  31N32                       SFLNXTCHG
+     A                                      SFLEND(*MORE)
+     A          R COVSFLCTL                 SFLCTL(COVSFL)
+     A                                      SFLSIZ(0050)
+     A                                      SFLPAG(0009)
+     A     31                            SFLDSP
+     A     31                            SFLDSPCTL
+     A     32                            SFLCLR
+     A     90                            SFLEND
+     A                                      OVERLAY
+     A                                      CA03 CA12
+     A            6     3'Type  Coverage Description     '-
+     A                  '       Limit Amt     Premium Amt Act'
+     A                                  DSPATR(UL)
+     A          R POLSCHFM
+     A            1     2'PCIS'
+     A            1    25'Coverage / Endorsement Maintenance'
+     A                                  DSPATR(HI UL)
+     A            1    65DATE
+     A                                  EDTCDE(Y)
+     A            2     2'Policy Number. . . . . . :'
+     A            2    30POLNBR    12A  O  1  2 30
+     A           20     2'Message  . . :'
+     A           20    17MSGTEXT   60A  O  1 20 17
+     A                                  DSPATR(RI)
+     A           22     2'F3=Exit  F12=Cancel  (Page Down=More)'
+     A                                  COLOR(BLU)
+     A           23     2'Act: A=Add  C=Change  D=Delete'
+     A                                  COLOR(BLU)
+     A     90                      ERRMSG('Limit Amount must be greater  -
+     A                                       than zero' 70) 20 17
+     A     91                      ERRMSG('Invalid Coverage Type code'   -
+     A                                       71) 20 17
+     A     92                      ERRMSG('Invalid Action code -         -
+     A                                       use A/C/D' 72) 20 17

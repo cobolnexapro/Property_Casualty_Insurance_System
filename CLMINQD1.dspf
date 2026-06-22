@@ -1,0 +1,51 @@
+******************************************************************
+* DDS: CLMINQD1 - Claim Inquiry Panel w/ Subfile (Notes/Payments)*
+* Module: CLM   Program: CLM005A                                  *
+******************************************************************
+     A                                      DSPSIZ(24 80 *DS3)
+     A R CLMSFL                            SFL
+     A            SFLDATES  10A  O  4  3
+     A            SFLTYPES  20A  O  4 15
+     A            SFLAMTS   11Y2O  4 37
+     A                                  EDTCDE(1)
+     A            SFLTEXTS  30A  O  4 50
+     A N31  31N32                       SFLNXTCHG
+     A                                      SFLEND(*MORE)
+     A          R CLMSFLCTL                 SFLCTL(CLMSFL)
+     A                                      SFLSIZ(0050)
+     A                                      SFLPAG(0008)
+     A     31                            SFLDSP
+     A     31                            SFLDSPCTL
+     A     32                            SFLCLR
+     A     90                            SFLEND
+     A                                      OVERLAY
+     A            6     3'Date        Type/Note         '-
+     A                  '   Amount      Description'
+     A                                  DSPATR(UL)
+     A                                      CA03 CA06 CA07 CA08 CA12
+     A          R CLMINQFM
+     A            1     2'PCIS'
+     A            1    25'Claim Inquiry'
+     A                                  DSPATR(HI UL)
+     A            1    65DATE
+     A                                  EDTCDE(Y)
+     A            2     2'Claim Number . . . . . . :'
+     A            2    30CLMNBR    14A  B  1  2 30
+     A            2    50'Status:'
+     A            2    58CLMSTAT    1A  O  1  2 58
+     A            3     2'Policy Number / Insured. :'
+     A            3    30POLNBR    12A  O  1  3 30
+     A            3    45CUSTNAME  30A  O  1  3 45
+     A            3    77'------------------------------------'-
+     A                  '------------------------------------'
+     A           16     2'Detail Type. . . . . . . :'
+     A           16    30DTLTYPE   10A  O  1 16 30
+     A                                  DSPATR(HI)
+     A           20     2'Message  . . :'
+     A           20    17MSGTEXT   60A  O  1 20 17
+     A                                  DSPATR(RI)
+     A           22     2'F3=Exit  F6=Update  F7=Approve  F8=Payment'
+     A                                  COLOR(BLU)
+     A           23     2'F12=Cancel  (Page Down=More)'
+     A                                  COLOR(BLU)
+     A     90                      ERRMSG('Claim not found' 70) 20 17

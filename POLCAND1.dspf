@@ -1,0 +1,46 @@
+******************************************************************
+* DDS: POLCAND1 - Policy Cancellation Panel                      *
+* Module: POL   Program: POL005A                                  *
+******************************************************************
+     A                                      DSPSIZ(24 80 *DS3)
+     A                                      CF03(03 'Exit')
+     A                                      CF12(12 'Cancel')
+     A                                      CA21(21)
+     A                                      PRINT
+     A                                      INDARA
+     A          R POLCANFM                  CA03 CA12 CA21
+     A                                      OVERLAY
+     A            1     2'PCIS'
+     A            1    25'Policy Cancellation'
+     A                                  DSPATR(HI UL)
+     A            1    65DATE
+     A                                  EDTCDE(Y)
+     A            3     2'------------------------------------'-
+     A                  '------------------------------------'
+     A            5     2'Policy Number. . . . . . :'
+     A            5    30POLNBR    12A  B  1  5 30
+     A            6     2'Customer . . . . . . . . :'
+     A            6    30CUSTNAME  50A  O  1  6 30
+     A            7     2'Current Status . . . . . :'
+     A            7    30POLSTAT    1A  O  1  7 30
+     A            8     2'Cancellation Date. . . . :'
+     A            8    30CANDATE    8A  B  1  8 30
+     A            9     2'Cancellation Reason Code .:'
+     A            9    30CANRSN     3A  B  1  9 30
+     A           10     2'Refund Amount. . . . . . :'
+     A           10    30REFUNDAMT 11Y2O  1 10 30
+     A                                  EDTCDE(1)
+     A           13     2'Confirm Cancellation (Y/N):'
+     A           13    30CONFIRM    1A  B  1 13 30
+     A                                  DSPATR(HI)
+     A           20     2'Message  . . :'
+     A           20    17MSGTEXT   60A  O  1 20 17
+     A                                  DSPATR(RI)
+     A           22     2'F3=Exit  F12=Cancel  F21=Confirm Cancel'
+     A                                  COLOR(BLU)
+     A     90                      ERRMSG('Policy already cancelled'     -
+     A                                       70) 20 17
+     A     91                      ERRMSG('Invalid Cancellation Reason   -
+     A                                       Code' 71) 20 17
+     A     92                      ERRMSG('Please respond Y or N'        -
+     A                                       72) 20 17

@@ -1,0 +1,59 @@
+******************************************************************
+* DDS: BILPMTD1 - Billing Payment Entry Panel                    *
+* Module: BIL   Program: BIL002A                                  *
+******************************************************************
+     A                                      DSPSIZ(24 80 *DS3)
+     A                                      CF03(03 'Exit')
+     A                                      CF12(12 'Cancel')
+     A                                      CA21(21)
+     A                                      ENTER
+     A                                      PRINT
+     A                                      INDARA
+     A          R BILPMTFM                  CA03 CA12 CA21
+     A                                      OVERLAY
+     A            1     2'PCIS'
+     A            1    25'Billing - Payment Entry'
+     A                                  DSPATR(HI UL)
+     A            1    65DATE
+     A                                  EDTCDE(Y)
+     A            3     2'------------------------------------'-
+     A                  '------------------------------------'
+     A            5     2'Invoice Number . . . . . :'
+     A            5    30INVNBR    14A  B  1  5 30
+     A            6     2'Policy Number. . . . . . :'
+     A            6    30POLNBR    12A  O  1  6 30
+     A            7     2'Insured. . . . . . . . . :'
+     A            7    30CUSTNAME  50A  O  1  7 30
+     A            8     2'Invoice Amount Due . . . :'
+     A            8    30AMTDUE    11Y2O  1  8 30
+     A                                  EDTCDE(1)
+     A            9     2'Balance Outstanding. . . :'
+     A            9    30BALANCE   11Y2O  1  9 30
+     A                                  EDTCDE(1)
+     A           11     2'Payment Date (MM/DD/YYYY):'
+     A           11    30PMTDATE   10A  B  1 11 30
+     A           12     2'Payment Method (CC/CK/EF) :'
+     A           12    30PMTMETH    2A  B  1 12 30
+     A           13     2'Payment Amount . . . . . :'
+     A           13    30PMTAMT    11Y2B  1 13 30
+     A                                  EDTCDE(1)
+     A           14     2'Reference / Check Number .:'
+     A           14    30REFNBR    20A  B  1 14 30
+     A           16     2'New Balance. . . . . . . :'
+     A           16    30NEWBAL    11Y2O  1 16 30
+     A                                  EDTCDE(1)
+     A                                  DSPATR(HI)
+     A           20     2'Message  . . :'
+     A           20    17MSGTEXT   60A  O  1 20 17
+     A                                  DSPATR(RI)
+     A           22     2'F3=Exit  F12=Cancel  F21=Confirm Payment'
+     A                                  COLOR(BLU)
+     A     90                      ERRMSG('Invoice not found' 70) 20 17
+     A     91                      ERRMSG('Payment Amount must be       -
+     A                                       greater than zero'         -
+     A                                       71) 20 17
+     A     92                      ERRMSG('Payment Amount exceeds       -
+     A                                       Balance Outstanding'       -
+     A                                       72) 20 17
+     A     93                      ERRMSG('Invalid Payment Method code' -
+     A                                       73) 20 17
